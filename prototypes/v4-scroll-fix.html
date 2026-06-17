@@ -68,41 +68,6 @@
   .day-detail{font-size:12px;color:var(--muted);line-height:1.5}
   .day-time{flex-shrink:0;font-size:11.5px;font-weight:600;color:var(--gold);background:var(--gold-soft);border:1px solid #f0e2c0;border-radius:6px;padding:3px 8px;height:fit-content;white-space:nowrap}
   .composer{padding:12px 30px 18px;background:var(--paper);flex-shrink:0;border-top:1px solid transparent}
-  /* 自测快捷条 */
-  .test-bar{max-width:730px;margin:0 auto 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .test-btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--accent);cursor:pointer;transition:all .15s}
-  .test-btn:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
-  .test-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
-  .test-btn.primary:hover{filter:brightness(1.05)}
-  .test-hint{font-size:11px;color:var(--muted);margin-left:2px}
-  /* 考点行的"测一下"按钮 */
-  .topic-test{font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid #cfe3db;border-radius:6px;padding:3px 8px;cursor:pointer;flex-shrink:0;transition:all .15s;white-space:nowrap}
-  .topic-test:hover{background:var(--accent);color:#fff}
-  /* quiz 小测验弹窗 */
-  .quiz-bg{position:fixed;inset:0;background:rgba(22,20,15,.5);backdrop-filter:blur(3px);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
-  .quiz-bg.show{display:flex;animation:fade .2s ease}
-  .quiz{background:var(--panel);border-radius:18px;max-width:480px;width:100%;max-height:86vh;overflow-y:auto;padding:26px 26px 22px;box-shadow:0 30px 80px rgba(0,0,0,.3);animation:rise .35s ease both}
-  .quiz h2{font-size:18px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-  .quiz .qsub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
-  .quiz-q{font-size:14.5px;font-weight:600;line-height:1.6;margin-bottom:14px}
-  .quiz-q .qnum{color:var(--accent);font-weight:700;margin-right:6px}
-  .quiz-opts{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
-  .quiz-opt{padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;cursor:pointer;font-size:13.5px;line-height:1.5;transition:all .15s;display:flex;gap:9px}
-  .quiz-opt:hover{border-color:var(--accent)}
-  .quiz-opt .ol{font-weight:700;color:var(--accent);flex-shrink:0}
-  .quiz-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
-  .quiz-opt.correct{border-color:#2b8c6f;background:#ddeee6}
-  .quiz-opt.wrong{border-color:var(--red);background:var(--red-soft)}
-  .quiz-explain{font-size:12.5px;line-height:1.6;color:var(--ink);background:var(--gold-soft);border:1px solid #f0e2c0;border-radius:10px;padding:11px 13px;margin-top:4px}
-  .quiz-explain b{color:var(--gold)}
-  .quiz-btn{width:100%;padding:12px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;transition:transform .12s}
-  .quiz-btn:hover{transform:translateY(-1px)}
-  .quiz-btn.ghost{background:none;color:var(--muted);border:1px solid var(--line)}
-  .quiz-loading{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
-  .quiz-score{text-align:center;padding:10px 0 4px}
-  .quiz-score .big{font-size:42px;font-weight:800;letter-spacing:-1px;line-height:1}
-  .quiz-score .lab{font-size:13px;color:var(--muted);margin-top:6px}
-  .quiz-close{position:absolute;top:16px;right:18px;font-size:20px;color:var(--muted);background:none;border:none;cursor:pointer;line-height:1}
   .composer-inner{max-width:730px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:8px 8px 8px 16px;display:flex;align-items:flex-end;gap:10px;box-shadow:var(--shadow);transition:border-color .15s}
   .composer-inner:focus-within{border-color:var(--accent)}
   textarea{flex:1;border:none;outline:none;resize:none;font:inherit;font-size:14.5px;line-height:1.6;max-height:120px;padding:7px 0;background:transparent;color:var(--ink)}
@@ -249,8 +214,6 @@
     .chat{height:auto;min-height:0}
     .chat-scroll{height:auto;overflow:visible;padding:20px 16px 8px}
     .composer{position:sticky;bottom:0;padding:10px 16px 14px;border-top:1px solid var(--line)}
-    .test-bar{margin-bottom:8px}
-    .test-hint{display:none}
     .panel{border-left:none;border-top:8px solid var(--paper);height:auto;overflow:visible}
     .tabs{position:sticky;top:58px;background:var(--panel);z-index:20}
     .tab-body{height:auto;overflow:visible;max-height:none}
@@ -325,24 +288,11 @@
         </div>
       </div>
       <div class="composer">
-        <div class="test-bar">
-          <button class="test-btn primary" id="testMeBtn">🎯 测试我</button>
-          <button class="test-btn" id="quizBtn">📝 来个小测验</button>
-          <span class="test-hint">想检验学习成果？随时点这里自测</span>
-        </div>
         <div class="composer-inner">
           <textarea id="input" rows="1" placeholder="问我任何问题，或让我考考你…"></textarea>
           <button class="send" id="send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
         <div class="composer-hint">演示原型 · 数据本地持久保存，关闭后再打开记录仍在 · 正式版将基于贵机构课件做精准问答</div>
-      </div>
-    </div>
-
-    <!-- QUIZ 弹窗 -->
-    <div class="quiz-bg" id="quizBg">
-      <div class="quiz" id="quizBox" style="position:relative">
-        <button class="quiz-close" id="quizClose">×</button>
-        <div id="quizInner"></div>
       </div>
     </div>
 
@@ -474,8 +424,7 @@ function renderTopics(pulseId){
   const list=document.getElementById('topicList');list.innerHTML='';
   TOPICS.forEach(t=>{
     const row=document.createElement('div');row.className='topic'+(t.id===pulseId?' pulse':'');
-    const testBtn=t.level>0?`<button class="topic-test" onclick="testTopic('${t.id}')">测一下</button>`:`<div class="topic-tag ${LV_CLS[t.level]}">${LV_TAG[t.level]}</div>`;
-    row.innerHTML=`<div class="topic-bar" style="background:${BAR[t.level]}"></div><div class="topic-body"><div class="topic-name">${t.name}</div><div class="topic-meta">${t.level===0?'尚未学习':LV_TAG[t.level]+' · 已练 '+(t.touches||1)+' 次'}</div></div>${testBtn}`;
+    row.innerHTML=`<div class="topic-bar" style="background:${BAR[t.level]}"></div><div class="topic-body"><div class="topic-name">${t.name}</div><div class="topic-meta">${t.level===0?'尚未学习':'已练习 '+(t.touches||1)+' 次'}</div></div><div class="topic-tag ${LV_CLS[t.level]}">${LV_TAG[t.level]}</div>`;
     list.appendChild(row);
   });
   updateReadiness();
@@ -564,65 +513,32 @@ function reviewWeak(id,name){
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 /* ================= 学习信号分析 ================= */
-// 跟踪对话上下文：AI 是否刚出了检验题、当前活跃考点
-let pendingCheck=null;   // {topicId} 表示 AI 刚出题，等学生作答
-let activeTopic=null;    // 当前对话聚焦的考点（用于归类后续模糊提问）
-
 function detectTopic(text){
   const low=text.toLowerCase();
   for(const t of TOPICS){if(t.key.some(k=>low.includes(k.toLowerCase())))return t.id}
   return null;
 }
-// 困惑信号（学生主动表示没懂）
-const WEAK_SIGNALS=['没懂','不懂','没明白','不明白','没搞懂','再讲','听不懂','不会','看不懂','没太','糊涂','还是不','搞不','不太理解','没理解','蒙了','晕','迷糊','一脸懵','???','？？？'];
-// 答题型回答（学生在回应检验题）
-const ANSWER_PATTERNS=[/^(是|不是|对|错|yes|no|对的|不对|是的|不是的)/i,/^[abcd]$/i,/^(选)?[abcd][\s、.，]/i,/^(我觉得|我认为|应该是|答案是)/];
-function isAnswerLike(text){
-  const t=text.trim();
-  if(t.length>40)return false; // 太长不像在答选择/判断题
-  return ANSWER_PATTERNS.some(p=>p.test(t));
-}
-// 标记薄弱
-function markWeak(topicId,reason){
-  if(!topicId)return;
-  weakSpots[topicId]=weakSpots[topicId]||{count:0,reasons:[]};
-  weakSpots[topicId].count++;
-  weakSpots[topicId].reasons.push(reason.slice(0,40));
-  const t=TOPICS.find(x=>x.id===topicId);
-  if(t&&t.level>1){t.level--;topicState[topicId]={level:t.level,touches:t.touches||0};renderTopics(topicId)}
-  renderRadar();
-}
+const WEAK_SIGNALS=['没懂','不懂','没明白','不明白','没搞懂','再讲','听不懂','不会','看不懂','没太','糊涂','还是不','搞不','不太理解','没理解','蒙了','晕'];
 function analyzeLearning(userText,aiText,topicId){
-  const useTopic=topicId||activeTopic;
-  // 推进掌握度（有明确考点时）
-  if(useTopic){
-    const t=TOPICS.find(x=>x.id===useTopic);
-    if(t){t.level=Math.min(3,t.level+1);t.touches=(t.touches||0)+1;topicState[useTopic]={level:t.level,touches:t.touches};renderTopics(useTopic)}
+  // 推进掌握度
+  if(topicId){
+    const t=TOPICS.find(x=>x.id===topicId);
+    t.level=Math.min(3,t.level+1);t.touches=(t.touches||0)+1;
+    topicState[topicId]={level:t.level,touches:t.touches};
+    renderTopics(topicId);
   }
-  // 1) 学生主动表示没懂
+  // 检测薄弱信号
   const low=userText.toLowerCase();
-  if(WEAK_SIGNALS.some(s=>low.includes(s))){
-    markWeak(useTopic,'表示没理解：'+userText);
+  const isWeak=WEAK_SIGNALS.some(s=>low.includes(s));
+  if(isWeak && topicId){
+    weakSpots[topicId]=weakSpots[topicId]||{count:0,reasons:[]};
+    weakSpots[topicId].count++;
+    weakSpots[topicId].reasons.push(userText.slice(0,40));
+    // 薄弱时掌握度回退一档，更真实
+    const t=TOPICS.find(x=>x.id===topicId);
+    if(t.level>1){t.level--;topicState[topicId].level=t.level;renderTopics(topicId)}
   }
-  // 2) 学生在回答检验题 → 让 AI 在回复里判断对错（见 send 中解析 [判定:对/错]）
-  //    这里由 send() 调用 judgeAnswer 处理，不在此重复
   renderRadar();
-}
-// 由 send() 调用：根据 AI 回复中的判定标记，更新对错
-function applyJudgement(aiText,topicId){
-  const useTopic=topicId||activeTopic;
-  // AI 被要求在判定答题对错时，在回复开头输出 [判定:对] 或 [判定:错]
-  const m=aiText.match(/\[判定[:：]\s*(对|错|正确|错误|wrong|right)\]/i);
-  if(m){
-    const wrong=/错|wrong/i.test(m[1]);
-    if(wrong){markWeak(useTopic,'自测答错：'+(pendingCheck?.q||'检验题'))}
-    else if(useTopic){ // 答对，掌握度可再进一档
-      const t=TOPICS.find(x=>x.id===useTopic);
-      if(t){t.level=Math.min(3,t.level+1);topicState[useTopic]={level:t.level,touches:t.touches||1};renderTopics(useTopic)}
-    }
-    return true;
-  }
-  return false;
 }
 
 /* ================= 标签切换 ================= */
@@ -707,15 +623,11 @@ function injectPlan(){
 const thread=document.getElementById('thread'),scroll=document.getElementById('scroll');
 const input=document.getElementById('input'),sendBtn=document.getElementById('send');
 let history=[],busy=false;
-function sysPrompt(answering){
+function sysPrompt(){
   const baseMap={zero:'学生零基础，第一次接触，务必从最根本概念讲起，绝不跳步，多用生活化例子。',some:'学生学过但忘了，快速带过基础、重点补薄弱。',exam:'学生想冲高分，可深入，多给拿分技巧和易错点。',rescue:'学生临考时间紧，聚焦高频考点和答题模板，高效划重点。'};
-  let p=`你是"极致·智学私教"，面向硕士留学生的 AI 课后自学辅导老师。课程：「${profile.course}」，学校：${profile.school}。学生情况：${baseMap[profile.base]}每天可学约 ${profile.time} 小时。
+  return `你是"极致·智学私教"，面向硕士留学生的 AI 课后自学辅导老师。课程：「${profile.course}」，学校：${profile.school}。学生情况：${baseMap[profile.base]}每天可学约 ${profile.time} 小时。
 教学要求：1.讲解简洁，每次 200 字内，用通俗例子，必要时给关键公式。2.讲完一个点后用一句话提"检验理解"的小问题。3.对标"能否通过考试"，指出常见出题方式或易错点。4.如问规划/进度，结合作业 PS2(6/24 due)和期末(约23天后)给务实建议。5.语气温暖鼓励、判断中立。中文回答，术语中英对照。
 输出：自然段落，关键术语用 **加粗**。检验问题单独成段，以"🤔 检验一下：" 开头。`;
-  if(answering){
-    p+=`\n\n【重要】学生这条消息是在回答你上一轮的检验题/测试题。请先判断对错，并在你回复的**最开头**输出一个判定标记：答对输出 [判定:对]，答错输出 [判定:错]。然后再温暖地讲评：答对就肯定并稍作延伸，答错就耐心纠正、讲清正确答案和思路。判定标记必须放在最前面，单独存在。`;
-  }
-  return p;
 }
 function addUserMsg(t){const e=document.createElement('div');e.className='msg user';e.innerHTML=`<div class="avatar">我</div><div class="bubble"></div>`;e.querySelector('.bubble').textContent=t;thread.appendChild(e);sd()}
 function addTutorTyping(){const e=document.createElement('div');e.className='msg tutor';e.innerHTML=`<div class="avatar">极</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;thread.appendChild(e);sd();return e.querySelector('.bubble')}
@@ -730,35 +642,18 @@ async function send(text){
   addUserMsg(text);history.push({role:'user',content:text});
   input.value='';input.style.height='auto';
   const bubble=addTutorTyping();
-
-  // 判断本轮归属考点：优先关键词命中；若是"答题型"短回复，则沿用当前活跃考点
-  let topicId=detectTopic(text);
-  const answering=isAnswerLike(text)&&(pendingCheck||activeTopic);
-  if(!topicId&&answering)topicId=pendingCheck?.topicId||activeTopic;
-  if(topicId)activeTopic=topicId; // 更新对话焦点
-
+  const topicId=detectTopic(text);
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,system:sysPrompt(answering),messages:history})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,system:sysPrompt(),messages:history})});
     const data=await res.json();
-    let reply=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim()||"（演示提示：未取得回复，请稍后再试）";
+    const reply=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim()||"（演示提示：未取得回复，请稍后再试）";
     history.push({role:'assistant',content:reply});
-
-    // 若 AI 输出了对错判定标记，先据此更新薄弱/掌握，再从显示文本中隐藏标记
-    const judged=applyJudgement(reply,topicId);
-    const replyForShow=reply.replace(/\[判定[:：]\s*(对|错|正确|错误|wrong|right)\]/i,'').trim();
-    bubble.innerHTML=renderMd(replyForShow);sd();
-
-    // 记录足迹（存学生真实提问 + 归属考点）
-    const plainA=replyForShow.replace(/🤔[\s\S]*$/,'').replace(/\*\*/g,'').trim();
-    const qLabel=answering?('（作答）'+text):text;
-    footprint.push({date:today(),q:qLabel,a:plainA.slice(0,120),topic:topicId,time:nowTime()});
-
-    // 更新检验题状态：本轮 AI 又出了检验题吗？
-    if(/🤔\s*检验一下/.test(reply)){pendingCheck={topicId:topicId||activeTopic,q:'检验题'}}
-    else{pendingCheck=null}
-
-    // 分析学习（推进进度 + 困惑检测；对错已由 applyJudgement 处理）
-    if(!judged)analyzeLearning(text,reply,topicId);
+    bubble.innerHTML=renderMd(reply);sd();
+    // 记录足迹
+    const plainA=reply.replace(/🤔[\s\S]*$/,'').replace(/\*\*/g,'').trim();
+    footprint.push({date:today(),q:text,a:plainA.slice(0,120),topic:topicId,time:nowTime()});
+    // 分析学习（推进进度 + 薄弱检测）
+    analyzeLearning(text,reply,topicId);
     renderFootprint();
     saveState();
   }catch(err){
@@ -769,98 +664,6 @@ sendBtn.addEventListener('click',()=>send(input.value));
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(input.value)}});
 input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});
 document.getElementById('chips').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c)send(c.dataset.q)});
-
-/* ================= 自测功能 ================= */
-// A. "测试我"：考已学过的考点（聊天内出题）
-document.getElementById('testMeBtn').addEventListener('click',()=>{
-  const learned=TOPICS.filter(t=>t.level>0);
-  if(learned.length===0){send('我想测试一下，但还没开始学。请先简单教我"需求价格弹性"，再出一道题考我。');return}
-  const pick=learned[Math.floor(Math.random()*learned.length)];
-  activeTopic=pick.id;pendingCheck={topicId:pick.id,q:'测试题'};
-  send('请就"'+pick.name+'"出一道有一定难度的题目考我，只出题、先别给答案，等我作答。');
-});
-// B. 单考点"测一下"
-function testTopic(id){
-  const t=TOPICS.find(x=>x.id===id);if(!t)return;
-  activeTopic=id;pendingCheck={topicId:id,q:'测试题'};
-  // 若当前在面板小屏，切回聊天可见
-  send('请就"'+t.name+'"这个考点出一道题考我，只出题、先别给答案，等我作答后再判定对错。');
-}
-
-// C. 小测验：弹窗，AI 生成 4 道选择题，做完出分 + 薄弱分析
-const quizBg=document.getElementById('quizBg'),quizInner=document.getElementById('quizInner');
-document.getElementById('quizClose').addEventListener('click',()=>quizBg.classList.remove('show'));
-quizBg.addEventListener('click',e=>{if(e.target===quizBg)quizBg.classList.remove('show')});
-document.getElementById('quizBtn').addEventListener('click',startQuiz);
-
-let quizData=[],quizIdx=0,quizAnswers=[];
-async function startQuiz(){
-  quizBg.classList.add('show');
-  quizInner.innerHTML=`<div class="quiz-loading"><div class="spin" style="margin:0 auto 12px;width:22px;height:22px;border-width:3px"></div>正在为你出题…<br><span style="font-size:11px">基于你已学的考点</span></div>`;
-  const learned=TOPICS.filter(t=>t.level>0).map(t=>t.name);
-  const scope=learned.length>0?learned.join('、'):'需求价格弹性、消费者剩余等微观经济学基础';
-  try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-      model:"claude-sonnet-4-6",max_tokens:1500,
-      system:`你是"${profile.course}"的出题老师。请围绕这些考点：${scope}，出 4 道单选题，难度适合${profile.base==='zero'?'零基础':'有一定基础'}的学生。只输出严格的 JSON 数组，不要任何多余文字、不要 markdown 代码块。格式：[{"topic":"考点中文名","q":"题干","options":["A选项","B选项","C选项","D选项"],"answer":0,"explain":"为什么这个答案对，简短"}]。answer 是正确选项下标(0-3)。`,
-      messages:[{role:"user",content:"出 4 道单选题，只返回 JSON。"}]
-    })});
-    const data=await res.json();
-    let txt=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
-    txt=txt.replace(/```json|```/g,'').trim();
-    quizData=JSON.parse(txt);
-    quizIdx=0;quizAnswers=[];renderQuizQ();
-  }catch(err){
-    quizInner.innerHTML=`<h2>📝 小测验</h2><div class="quiz-loading">出题遇到点问题，请稍后再试。<br><span style="font-size:11px">（${esc(String(err).slice(0,60))}）</span></div><button class="quiz-btn ghost" onclick="document.getElementById('quizBg').classList.remove('show')">关闭</button>`;
-  }
-}
-function renderQuizQ(){
-  const q=quizData[quizIdx];
-  const opts=q.options.map((o,i)=>`<div class="quiz-opt" data-i="${i}" onclick="pickQuiz(${i})"><span class="ol">${'ABCD'[i]}</span><span>${esc(o)}</span></div>`).join('');
-  quizInner.innerHTML=`<h2>📝 小测验 <span style="font-size:12px;color:var(--muted);font-weight:500">${quizIdx+1} / ${quizData.length}</span></h2>
-    <div class="qsub">考点：${esc(q.topic||'综合')}</div>
-    <div class="quiz-q"><span class="qnum">Q${quizIdx+1}</span>${esc(q.q)}</div>
-    <div class="quiz-opts" id="quizOpts">${opts}</div>
-    <div id="quizFeedback"></div>`;
-}
-let quizLocked=false;
-function pickQuiz(i){
-  if(quizLocked)return;quizLocked=true;
-  const q=quizData[quizIdx];const correct=q.answer;
-  quizAnswers.push({topic:q.topic,correct:i===correct});
-  document.querySelectorAll('#quizOpts .quiz-opt').forEach((el,idx)=>{
-    if(idx===correct)el.classList.add('correct');
-    else if(idx===i)el.classList.add('wrong');
-    el.style.pointerEvents='none';
-  });
-  document.getElementById('quizFeedback').innerHTML=
-    `<div class="quiz-explain"><b>${i===correct?'✓ 答对了':'✗ 答错了'}</b>：${esc(q.explain||'')}</div>
-     <button class="quiz-btn" onclick="nextQuiz()">${quizIdx<quizData.length-1?'下一题 →':'看结果 →'}</button>`;
-}
-function nextQuiz(){
-  quizLocked=false;
-  if(quizIdx<quizData.length-1){quizIdx++;renderQuizQ()}
-  else{finishQuiz()}
-}
-function finishQuiz(){
-  const right=quizAnswers.filter(a=>a.correct).length;
-  const total=quizAnswers.length;
-  const pct=Math.round(right/total*100);
-  // 答错的考点 → 写入薄弱雷达 + 记录足迹
-  const wrongTopics=quizAnswers.filter(a=>!a.correct);
-  wrongTopics.forEach(a=>{
-    const t=TOPICS.find(x=>x.name===a.topic);
-    if(t)markWeak(t.id,'小测验答错：'+a.topic);
-  });
-  footprint.push({date:today(),q:'（小测验）完成 '+total+' 题，答对 '+right+' 题',a:'得分 '+pct+'分。'+(wrongTopics.length?'薄弱：'+wrongTopics.map(w=>w.topic).join('、'):'全部答对，很棒！'),topic:null,time:nowTime()});
-  renderFootprint();saveState();
-  const weakList=wrongTopics.length?`<div class="quiz-explain" style="margin-top:14px"><b>需要加强</b>：${wrongTopics.map(w=>esc(w.topic)).join('、')}（已记入薄弱雷达，可去复习）</div>`:`<div class="quiz-explain" style="margin-top:14px;background:var(--accent-soft);border-color:#cfe3db"><b style="color:var(--accent)">太棒了</b>：全部答对！继续保持。</div>`;
-  quizInner.innerHTML=`<h2>📝 测验结果</h2>
-    <div class="quiz-score"><div class="big" style="color:${pct>=70?'var(--accent)':'var(--gold)'}">${pct}<span style="font-size:20px">分</span></div><div class="lab">答对 ${right} / ${total} 题</div></div>
-    ${weakList}
-    <button class="quiz-btn" onclick="startQuiz()">再测一组</button>
-    <button class="quiz-btn ghost" style="margin-top:8px" onclick="document.getElementById('quizBg').classList.remove('show')">完成</button>`;
-}
 
 /* ================= 启动 ================= */
 (async function init(){

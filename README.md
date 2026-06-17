@@ -14,10 +14,20 @@
 
 ## 当前内容
 
-- `prototypes/latest.html` — **最新版**（= v3，演示请用这个）
+- `prototypes/latest.html` — **最新版**（= v5，演示请用这个）
 - `prototypes/v1-chat-progress.html` — 聊天私教 + 考点进度面板
 - `prototypes/v2-onboarding-plan.html` — 零基础引导、资料上传、时间轴、智能学习计划
 - `prototypes/v3-footprint-radar.html` — 学习足迹、薄弱雷达、数据持久化
+- `prototypes/v4-scroll-fix.html` — 修复滚动问题，移动端可完整浏览
+- `prototypes/v5-selftest.html` — 三种自测、答题对错判定、足迹与薄弱修正
+
+### v5 新增 / 修复
+
+- **🎯 测试我** — 随时点，AI 就已学考点出题，答完即时判对错
+- **测一下（单考点）** — 考点掌握地图里每个学过的考点旁可单独自测
+- **📝 小测验** — 一次 4 道选择题，做完出"得分 + 薄弱分析"，错题自动进薄弱雷达
+- **答题对错判定** — 学生回答检验题时，AI 判对错；答错自动标记薄弱（修复此前只认关键词的问题）
+- **学习足迹修正** — 正确记录学生提问与归属考点（修复标题错位、涉及考点为 0）
 
 ### v3 新增功能
 
@@ -40,6 +50,8 @@
 | v1 | v1-chat-progress.html | 聊天私教 + 考点进度 |
 | v2 | v2-onboarding-plan.html | 引导 + 计划 + 上传 + 时间轴 |
 | v3 | v3-footprint-radar.html | 学习足迹 + 薄弱雷达 + 持久化 |
+| v4 | v4-scroll-fix.html | 修复滚动 + 移动端适配 |
+| v5 | v5-selftest.html | 三种自测 + 答题判定 + 修复足迹/薄弱 |
 
 详见 `git log`。
 
