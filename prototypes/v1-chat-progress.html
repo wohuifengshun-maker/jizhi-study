@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>极致 · 智学私教 — 自学系统原型</title>
+<style>
+  :root{
+    --ink:#16140f;
+    --paper:#faf7f0;
+    --panel:#ffffff;
+    --line:#e6e0d3;
+    --accent:#1f6f5c;       /* 深松绿 — 知识/成长 */
+    --accent-soft:#e7f1ed;
+    --gold:#c4922f;          /* 暖金 — 极致品牌点缀 */
+    --muted:#7a7468;
+    --grad-1:#1f6f5c;
+    --grad-2:#2b8c6f;
+    --mastery-0:#e6e0d3;
+    --mastery-1:#f0d9a8;
+    --mastery-2:#b7d9c8;
+    --mastery-3:#1f6f5c;
+    --shadow:0 1px 2px rgba(22,20,15,.04),0 8px 30px rgba(22,20,15,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    height:100vh;
+    overflow:hidden;
+  }
+  /* ---------- top bar ---------- */
+  .topbar{
+    height:60px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;border-bottom:1px solid var(--line);background:var(--panel);
+    position:relative;z-index:5;
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--grad-1),var(--grad-2));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:17px;letter-spacing:-.5px;
+    box-shadow:0 4px 12px rgba(31,111,92,.3);
+  }
+  .brand-name{font-weight:700;font-size:15.5px;letter-spacing:.2px}
+  .brand-name span{color:var(--gold)}
+  .brand-sub{font-size:11.5px;color:var(--muted);margin-top:1px;letter-spacing:.3px}
+  .course-pill{
+    display:flex;align-items:center;gap:8px;
+    background:var(--accent-soft);border:1px solid #d2e5dd;
+    padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--accent);
+  }
+  .course-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 60px)}
+  /* ---------- chat ---------- */
+  .chat{display:flex;flex-direction:column;height:100%;background:var(--paper);min-width:0}
+  .chat-scroll{flex:1;overflow-y:auto;padding:28px 32px 8px}
+  .chat-inner{max-width:720px;margin:0 auto}
+  .welcome{padding:18px 0 8px}
+  .welcome h1{
+    font-size:23px;font-weight:700;letter-spacing:-.3px;line-height:1.3;margin-bottom:10px;
+  }
+  .welcome h1 em{font-style:normal;color:var(--accent)}
+  .welcome p{color:var(--muted);font-size:14px;line-height:1.7;max-width:560px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+  .chip{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;font-size:13px;color:var(--ink);cursor:pointer;
+    transition:all .15s ease;line-height:1.4;
+  }
+  .chip:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
+  .chip .k{color:var(--accent);font-weight:600;margin-right:6px;font-size:12px}
+  /* messages */
+  .msg{display:flex;gap:12px;margin:22px 0;animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .avatar{
+    width:30px;height:30px;border-radius:8px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+  }
+  .msg.tutor .avatar{background:linear-gradient(135deg,var(--grad-1),var(--grad-2));color:#fff}
+  .msg.user .avatar{background:#ece6d8;color:var(--muted)}
+  .bubble{font-size:14.5px;line-height:1.75;padding-top:3px}
+  .msg.user{flex-direction:row-reverse}
+  .msg.user .bubble{
+    background:var(--panel);border:1px solid var(--line);border-radius:13px 13px 4px 13px;
+    padding:11px 15px;max-width:78%;box-shadow:var(--shadow);
+  }
+  .msg.tutor .bubble{max-width:100%}
+  .bubble :is(p){margin:0 0 10px}
+  .bubble :is(p):last-child{margin-bottom:0}
+  .bubble strong{color:var(--accent);font-weight:600}
+  .bubble ul{margin:6px 0 10px;padding-left:20px}
+  .bubble li{margin:4px 0}
+  .check-q{
+    margin-top:12px;background:#fdf8ec;border:1px solid #f0e2c0;border-left:3px solid var(--gold);
+    border-radius:8px;padding:11px 14px;font-size:13.5px;
+  }
+  .check-q b{color:var(--gold);font-weight:700;display:block;margin-bottom:3px;font-size:12px;letter-spacing:.5px}
+  .typing{display:inline-flex;gap:4px;padding:6px 0}
+  .typing span{width:7px;height:7px;border-radius:50%;background:#c8c0ad;animation:blink 1.3s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+  /* composer */
+  .composer{padding:14px 32px 20px;background:var(--paper)}
+  .composer-inner{
+    max-width:720px;margin:0 auto;background:var(--panel);border:1px solid var(--line);
+    border-radius:15px;padding:8px 8px 8px 16px;display:flex;align-items:flex-end;gap:10px;
+    box-shadow:var(--shadow);transition:border-color .15s;
+  }
+  .composer-inner:focus-within{border-color:var(--accent)}
+  textarea{
+    flex:1;border:none;outline:none;resize:none;font:inherit;font-size:14.5px;
+    line-height:1.6;max-height:120px;padding:7px 0;background:transparent;color:var(--ink);
+  }
+  textarea::placeholder{color:#b3ab9b}
+  .send{
+    width:38px;height:38px;border:none;border-radius:11px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--grad-1),var(--grad-2));color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .15s;
+  }
+  .send:hover{transform:scale(1.05)}
+  .send:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .composer-hint{max-width:720px;margin:8px auto 0;font-size:11.5px;color:#b3ab9b;text-align:center}
+  /* ---------- progress panel ---------- */
+  .panel{border-left:1px solid var(--line);background:var(--panel);overflow-y:auto;padding:22px 20px}
+  .panel-section{margin-bottom:26px}
+  .panel-label{
+    font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--muted);
+    text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px;
+  }
+  .panel-label::before{content:"";width:14px;height:2px;background:var(--gold);border-radius:2px}
+  /* readiness ring */
+  .ring-wrap{display:flex;align-items:center;gap:18px}
+  .ring{position:relative;width:96px;height:96px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring-num{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .ring-num b{font-size:26px;font-weight:700;letter-spacing:-1px;line-height:1}
+  .ring-num small{font-size:10px;color:var(--muted);margin-top:2px}
+  .ring-side{font-size:12.5px;line-height:1.6;color:var(--muted)}
+  .ring-side b{color:var(--ink);font-weight:600;display:block;font-size:13.5px;margin-bottom:2px}
+  /* topic list */
+  .topic{
+    display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid #f1ece0;
+  }
+  .topic:last-child{border-bottom:none}
+  .topic-bar{width:4px;height:30px;border-radius:3px;flex-shrink:0}
+  .topic-body{flex:1;min-width:0}
+  .topic-name{font-size:13px;font-weight:600;line-height:1.35;margin-bottom:3px}
+  .topic-meta{font-size:11px;color:var(--muted)}
+  .topic-tag{
+    font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;letter-spacing:.3px;
+  }
+  .t0{background:#f3efe5;color:#9b9485}
+  .t1{background:#fbeecb;color:#b07d1f}
+  .t2{background:#ddeee6;color:#2b8c6f}
+  .t3{background:var(--accent);color:#fff}
+  .topic.pulse{animation:pulseRow 1.4s ease}
+  @keyframes pulseRow{0%{background:#fdf8ec}100%{background:transparent}}
+  /* legend */
+  .legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:14px}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted)}
+  .legend-dot{width:8px;height:8px;border-radius:3px}
+  /* exam countdown */
+  .exam-card{
+    background:linear-gradient(135deg,#1f6f5c,#185448);border-radius:13px;padding:15px 16px;color:#fff;
+  }
+  .exam-card .lab{font-size:10.5px;letter-spacing:1px;opacity:.8;text-transform:uppercase}
+  .exam-card .big{font-size:21px;font-weight:700;margin:5px 0 2px;letter-spacing:-.3px}
+  .exam-card .sub{font-size:12px;opacity:.85}
+  .panel-foot{font-size:10.5px;color:#c2bbac;text-align:center;padding-top:6px;line-height:1.6}
+  /* scrollbars */
+  ::-webkit-scrollbar{width:9px}
+  ::-webkit-scrollbar-thumb{background:#e0d9ca;border-radius:9px;border:2px solid var(--panel)}
+  ::-webkit-scrollbar-track{background:transparent}
+  /* responsive */
+  @media(max-width:920px){
+    .layout{grid-template-columns:1fr}
+    .panel{display:none}
+  }
+  .demo-badge{
+    position:fixed;bottom:14px;left:14px;z-index:20;
+    background:var(--ink);color:#f0ebdf;font-size:11px;padding:6px 12px;border-radius:8px;
+    opacity:.85;letter-spacing:.3px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">极</div>
+      <div>
+        <div class="brand-name">极致 · <span>智学私教</span></div>
+        <div class="brand-sub">AI 课后自学系统 · Newcore</div>
+      </div>
+    </div>
+    <div class="course-pill"><span class="dot"></span>本课程：中级微观经济学 ECON7001</div>
+  </div>
+
+  <div class="layout">
+    <!-- ============ CHAT ============ -->
+    <div class="chat">
+      <div class="chat-scroll" id="scroll">
+        <div class="chat-inner" id="thread">
+          <div class="welcome">
+            <h1>你好，这是你的 <em>ECON7001 私教</em>。<br>今天想巩固哪个考点？</h1>
+            <p>我会基于这门课的课件和考点来教你 —— 先问问你已经懂多少，再带你补齐。每次学完，右侧的考点进度会自动更新。零基础也没关系，我们一步步来。</p>
+            <div class="chips" id="chips">
+              <div class="chip" data-q="什么是需求价格弹性？我完全没基础，请从头讲。"><span class="k">入门</span>需求价格弹性是什么？</div>
+              <div class="chip" data-q="消费者剩余和生产者剩余怎么区分？考试常怎么考？"><span class="k">易混</span>消费者剩余 vs 生产者剩余</div>
+              <div class="chip" data-q="帮我梳理一下这门课最可能考的核心考点。"><span class="k">备考</span>这门课重点考什么？</div>
+              <div class="chip" data-q="出一道弹性的计算题考我，看看我掌握了没。"><span class="k">自测</span>考我一道弹性计算题</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <div class="composer-inner">
+          <textarea id="input" rows="1" placeholder="问我任何 ECON7001 的问题，或让我考考你…"></textarea>
+          <button class="send" id="send" title="发送">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="composer-hint">演示原型 · 由 Claude 实时驱动 · 正式版将绑定贵机构课件知识库（RAG）</div>
+      </div>
+    </div>
+
+    <!-- ============ PROGRESS PANEL ============ -->
+    <aside class="panel">
+      <div class="panel-section">
+        <div class="panel-label">考试就绪度</div>
+        <div class="ring-wrap">
+          <div class="ring">
+            <svg width="96" height="96">
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#eee7d8" stroke-width="9"/>
+              <circle id="ringFill" cx="48" cy="48" r="40" fill="none" stroke="url(#g)" stroke-width="9"
+                stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+              <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#2b8c6f"/><stop offset="1" stop-color="#1f6f5c"/>
+              </linearGradient></defs>
+            </svg>
+            <div class="ring-num"><b id="ringPct">0%</b><small>就绪度</small></div>
+          </div>
+          <div class="ring-side">
+            <b id="masteredCount">0 / 8 考点掌握</b>
+            达到约 70% 即具备通过本课考试的基础水平。继续提问，进度会随你的理解实时上升。
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">考点掌握地图</div>
+        <div id="topicList"></div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot" style="background:var(--mastery-0)"></span>未开始</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--mastery-1)"></span>能复述</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--mastery-2)"></span>能应用</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--mastery-3)"></span>模拟考通过</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">距离期末考试</div>
+        <div class="exam-card">
+          <div class="lab">ECON7001 Final Exam</div>
+          <div class="big">还剩 23 天</div>
+          <div class="sub">建议优先攻克标黄的薄弱考点</div>
+        </div>
+      </div>
+
+      <div class="panel-foot">本面板为演示数据。正式版将为每位学生<br>持久记录真实学习轨迹与掌握度。</div>
+    </aside>
+  </div>
+
+  <div class="demo-badge">● 演示原型 Demo</div>
+
+<script>
+/* ===================== 考点数据模型 ===================== */
+const TOPICS = [
+  {id:'elasticity', name:'需求与供给弹性', level:0, key:['弹性','elasticity','需求价格','供给']},
+  {id:'surplus',    name:'消费者/生产者剩余', level:0, key:['剩余','surplus','福利','无谓损失']},
+  {id:'utility',    name:'效用与消费者选择', level:0, key:['效用','utility','无差异','预算线','边际效用']},
+  {id:'production', name:'生产与成本理论', level:0, key:['成本','生产','边际成本','规模','产量']},
+  {id:'competition',name:'完全竞争市场', level:0, key:['完全竞争','perfect competition','价格接受']},
+  {id:'monopoly',   name:'垄断与市场势力', level:0, key:['垄断','monopoly','市场势力','价格歧视']},
+  {id:'game',       name:'博弈论基础', level:0, key:['博弈','game','纳什','囚徒','均衡策略']},
+  {id:'externality',name:'外部性与公共品', level:0, key:['外部性','externality','公共品','科斯','庇古']},
+];
+const LEVEL_TAG = ['未开始','能复述','能应用','已通过'];
+const LEVEL_CLS = ['t0','t1','t2','t3'];
+const BAR_COLOR = ['var(--mastery-0)','var(--mastery-1)','var(--mastery-2)','var(--mastery-3)'];
+
+function renderTopics(pulseId){
+  const list = document.getElementById('topicList');
+  list.innerHTML = '';
+  TOPICS.forEach(t=>{
+    const row = document.createElement('div');
+    row.className = 'topic' + (t.id===pulseId?' pulse':'');
+    row.innerHTML = `
+      <div class="topic-bar" style="background:${BAR_COLOR[t.level]}"></div>
+      <div class="topic-body">
+        <div class="topic-name">${t.name}</div>
+        <div class="topic-meta">${t.level===0?'尚未学习':'最近练习 · 共 '+(t.touches||1)+' 次'}</div>
+      </div>
+      <div class="topic-tag ${LEVEL_CLS[t.level]}">${LEVEL_TAG[t.level]}</div>`;
+    list.appendChild(row);
+  });
+  updateReadiness();
+}
+function updateReadiness(){
+  const total = TOPICS.length*3;
+  const got = TOPICS.reduce((s,t)=>s+t.level,0);
+  const pct = Math.round(got/total*100);
+  const mastered = TOPICS.filter(t=>t.level>=2).length;
+  document.getElementById('ringPct').textContent = pct+'%';
+  document.getElementById('masteredCount').textContent = mastered+' / '+TOPICS.length+' 考点掌握';
+  const c=251.3;
+  document.getElementById('ringFill').style.strokeDashoffset = c - c*pct/100;
+}
+/* 根据对话内容推进相关考点掌握度 */
+function advance(text){
+  const low = text.toLowerCase();
+  let hit=null;
+  for(const t of TOPICS){
+    if(t.key.some(k=>low.includes(k.toLowerCase()))){
+      t.level = Math.min(3, t.level+1);
+      t.touches = (t.touches||0)+1;
+      hit=t.id;
+      break;
+    }
+  }
+  renderTopics(hit);
+}
+renderTopics();
+
+/* ===================== 对话逻辑 ===================== */
+const thread = document.getElementById('thread');
+const scroll = document.getElementById('scroll');
+const input  = document.getElementById('input');
+const sendBtn= document.getElementById('send');
+let history = [];
+let busy = false;
+
+const SYSTEM_PROMPT = `你是"极致·智学私教"，一个面向硕士留学生的 AI 课后自学辅导老师，当前辅导课程是「中级微观经济学 ECON7001」。
+
+教学风格（务必遵守）：
+1. 苏格拉底式：回答前可以先简短确认学生已知多少，但不要每次都问，避免啰嗦。对方是零基础时直接从最基础讲起。
+2. 讲解简洁，每次控制在 200 字以内，用通俗例子（最好结合生活/商业场景）帮助理解，必要时给出关键公式。
+3. 讲完一个知识点后，用一句话提一个"检验理解"的小问题，确认学生是否真的懂了。
+4. 始终对标"能否通过期末考试"——指出这个考点考试常见的出题方式或易错点。
+5. 语气温暖、鼓励、判断中立，像一位有耐心的私教。
+6. 用中文回答（涉及专业术语时中英对照）。
+
+输出格式：用自然的段落，关键术语用 **加粗**。最后的检验问题单独成段，以"🤔 检验一下：" 开头。`;
+
+function addUserMsg(text){
+  const el = document.createElement('div');
+  el.className = 'msg user';
+  el.innerHTML = `<div class="avatar">我</div><div class="bubble"></div>`;
+  el.querySelector('.bubble').textContent = text;
+  thread.appendChild(el);
+  scrollDown();
+}
+function addTutorTyping(){
+  const el = document.createElement('div');
+  el.className = 'msg tutor';
+  el.innerHTML = `<div class="avatar">极</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  thread.appendChild(el);
+  scrollDown();
+  return el.querySelector('.bubble');
+}
+function renderMarkdown(raw){
+  // 轻量格式化：加粗、检验问题块、段落
+  let html = raw
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  // 拆分检验问题
+  const parts = html.split(/🤔\s*检验一下[:：]/);
+  let body = parts[0].trim().split(/\n{2,}|\n/).filter(Boolean).map(p=>`<p>${p}</p>`).join('');
+  if(parts[1]){
+    body += `<div class="check-q"><b>🤔 检验一下</b>${parts[1].trim()}</div>`;
+  }
+  return body;
+}
+function scrollDown(){ scroll.scrollTop = scroll.scrollHeight; }
+
+async function send(text){
+  if(busy || !text.trim()) return;
+  busy = true; sendBtn.disabled = true;
+  // 移除欢迎区
+  const w = thread.querySelector('.welcome');
+  if(w) w.remove();
+
+  addUserMsg(text);
+  history.push({role:'user', content:text});
+  input.value=''; input.style.height='auto';
+
+  const bubble = addTutorTyping();
+
+  try{
+    const res = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-6",
+        max_tokens:1000,
+        system:SYSTEM_PROMPT,
+        messages:history
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content||[])
+      .filter(b=>b.type==='text').map(b=>b.text).join('\n').trim()
+      || "（演示提示：未取得回复，请稍后再试）";
+    history.push({role:'assistant', content:reply});
+    bubble.innerHTML = renderMarkdown(reply);
+    advance(text + ' ' + reply);
+    scrollDown();
+  }catch(err){
+    bubble.innerHTML = `<p>演示连接出错了，请稍后重试。</p><p style="font-size:12px;color:var(--muted)">（${String(err).slice(0,80)}）</p>`;
+  }finally{
+    busy=false; sendBtn.disabled=false; input.focus();
+  }
+}
+
+/* events */
+sendBtn.addEventListener('click', ()=>send(input.value));
+input.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(input.value); }
+});
+input.addEventListener('input', ()=>{
+  input.style.height='auto';
+  input.style.height = Math.min(input.scrollHeight,120)+'px';
+});
+document.getElementById('chips').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip');
+  if(chip) send(chip.dataset.q);
+});
+input.focus();
+</script>
+</body>
+</html>

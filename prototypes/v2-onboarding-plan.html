@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>极致 · 智学私教 — 零基础自学系统</title>
+<style>
+  :root{
+    --ink:#16140f; --paper:#faf7f0; --panel:#ffffff; --line:#e6e0d3;
+    --accent:#1f6f5c; --accent-2:#2b8c6f; --accent-soft:#e7f1ed;
+    --gold:#c4922f; --gold-soft:#fdf8ec; --muted:#7a7468;
+    --red:#c0492f; --red-soft:#fbeae5;
+    --m0:#e6e0d3; --m1:#f0d9a8; --m2:#b7d9c8; --m3:#1f6f5c;
+    --shadow:0 1px 2px rgba(22,20,15,.04),0 8px 30px rgba(22,20,15,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;
+    height:100vh;overflow:hidden;
+  }
+  /* ---------- top bar ---------- */
+  .topbar{
+    height:58px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;border-bottom:1px solid var(--line);background:var(--panel);position:relative;z-index:5;
+  }
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand-mark{
+    width:33px;height:33px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;
+    box-shadow:0 4px 12px rgba(31,111,92,.3);
+  }
+  .brand-name{font-weight:700;font-size:15px}
+  .brand-name span{color:var(--gold)}
+  .brand-sub{font-size:11px;color:var(--muted);margin-top:1px}
+  .course-pill{
+    display:flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid #d2e5dd;
+    padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--accent);
+  }
+  .course-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:1fr 360px;height:calc(100vh - 58px)}
+  .chat{display:flex;flex-direction:column;height:100%;background:var(--paper);min-width:0}
+  .chat-scroll{flex:1;overflow-y:auto;padding:26px 30px 8px}
+  .chat-inner{max-width:730px;margin:0 auto}
+  /* welcome */
+  .welcome{padding:14px 0 6px}
+  .welcome h1{font-size:22px;font-weight:700;letter-spacing:-.3px;line-height:1.35;margin-bottom:9px}
+  .welcome h1 em{font-style:normal;color:var(--accent)}
+  .welcome p{color:var(--muted);font-size:14px;line-height:1.7;max-width:580px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+  .chip{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;
+    font-size:13px;cursor:pointer;transition:all .15s;line-height:1.4;
+  }
+  .chip:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
+  .chip .k{color:var(--accent);font-weight:600;margin-right:6px;font-size:12px}
+  /* messages */
+  .msg{display:flex;gap:12px;margin:20px 0;animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .avatar{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .msg.tutor .avatar{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
+  .msg.user .avatar{background:#ece6d8;color:var(--muted)}
+  .bubble{font-size:14.5px;line-height:1.75;padding-top:3px}
+  .msg.user{flex-direction:row-reverse}
+  .msg.user .bubble{background:var(--panel);border:1px solid var(--line);border-radius:13px 13px 4px 13px;padding:11px 15px;max-width:78%;box-shadow:var(--shadow)}
+  .msg.tutor .bubble{max-width:100%}
+  .bubble p{margin:0 0 10px}.bubble p:last-child{margin-bottom:0}
+  .bubble strong{color:var(--accent);font-weight:600}
+  .bubble ul{margin:6px 0 10px;padding-left:20px}.bubble li{margin:4px 0}
+  .check-q{margin-top:12px;background:var(--gold-soft);border:1px solid #f0e2c0;border-left:3px solid var(--gold);border-radius:8px;padding:11px 14px;font-size:13.5px}
+  .check-q b{color:var(--gold);font-weight:700;display:block;margin-bottom:3px;font-size:12px;letter-spacing:.5px}
+  .typing{display:inline-flex;gap:4px;padding:6px 0}
+  .typing span{width:7px;height:7px;border-radius:50%;background:#c8c0ad;animation:blink 1.3s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+  /* plan card inside chat */
+  .plan-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:6px 0;box-shadow:var(--shadow)}
+  .plan-card h3{font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .plan-card h3 .ic{width:22px;height:22px;border-radius:6px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:13px}
+  .plan-card .meta{font-size:12px;color:var(--muted);margin-bottom:14px}
+  .day-row{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #f1ece0}
+  .day-row:last-child{border-bottom:none}
+  .day-tag{flex-shrink:0;width:54px;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;line-height:1.2}
+  .day-tag small{font-size:9px;color:var(--muted);font-weight:600;margin-top:1px}
+  .day-body{flex:1;min-width:0}
+  .day-task{font-size:13.5px;font-weight:600;line-height:1.4;margin-bottom:3px}
+  .day-detail{font-size:12px;color:var(--muted);line-height:1.5}
+  .day-time{flex-shrink:0;font-size:11.5px;font-weight:600;color:var(--gold);background:var(--gold-soft);border:1px solid #f0e2c0;border-radius:6px;padding:3px 8px;height:fit-content;white-space:nowrap}
+  /* composer */
+  .composer{padding:12px 30px 18px;background:var(--paper)}
+  .composer-inner{max-width:730px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:8px 8px 8px 16px;display:flex;align-items:flex-end;gap:10px;box-shadow:var(--shadow);transition:border-color .15s}
+  .composer-inner:focus-within{border-color:var(--accent)}
+  textarea{flex:1;border:none;outline:none;resize:none;font:inherit;font-size:14.5px;line-height:1.6;max-height:120px;padding:7px 0;background:transparent;color:var(--ink)}
+  textarea::placeholder{color:#b3ab9b}
+  .send{width:38px;height:38px;border:none;border-radius:11px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .send:hover{transform:scale(1.05)}.send:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .composer-hint{max-width:730px;margin:8px auto 0;font-size:11.5px;color:#b3ab9b;text-align:center}
+  /* ---------- right panel with tabs ---------- */
+  .panel{border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow:hidden}
+  .tabs{display:flex;border-bottom:1px solid var(--line);flex-shrink:0}
+  .tab{flex:1;padding:13px 4px;font-size:12px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .tab .ti{font-size:15px}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .tab:hover:not(.active){color:var(--ink)}
+  .tab-body{flex:1;overflow-y:auto;padding:20px 18px}
+  .tab-pane{display:none}.tab-pane.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sec-label{font-size:11px;font-weight:700;letter-spacing:1.1px;color:var(--muted);text-transform:uppercase;margin-bottom:13px;display:flex;align-items:center;gap:7px}
+  .sec-label::before{content:"";width:13px;height:2px;background:var(--gold);border-radius:2px}
+  .sec-label.mt{margin-top:24px}
+  /* readiness ring */
+  .ring-wrap{display:flex;align-items:center;gap:16px}
+  .ring{position:relative;width:90px;height:90px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-num b{font-size:24px;font-weight:700;letter-spacing:-1px;line-height:1}
+  .ring-num small{font-size:9.5px;color:var(--muted);margin-top:2px}
+  .ring-side{font-size:12px;line-height:1.6;color:var(--muted)}
+  .ring-side b{color:var(--ink);font-weight:600;display:block;font-size:13px;margin-bottom:2px}
+  /* topics */
+  .topic{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1ece0}
+  .topic:last-child{border-bottom:none}
+  .topic-bar{width:4px;height:28px;border-radius:3px;flex-shrink:0}
+  .topic-body{flex:1;min-width:0}
+  .topic-name{font-size:12.5px;font-weight:600;line-height:1.35;margin-bottom:2px}
+  .topic-meta{font-size:10.5px;color:var(--muted)}
+  .topic-tag{font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;flex-shrink:0}
+  .t0{background:#f3efe5;color:#9b9485}.t1{background:#fbeecb;color:#b07d1f}.t2{background:#ddeee6;color:#2b8c6f}.t3{background:var(--accent);color:#fff}
+  .topic.pulse{animation:pulseRow 1.4s ease}
+  @keyframes pulseRow{0%{background:var(--gold-soft)}100%{background:transparent}}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 11px;margin-top:13px}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+  .legend-dot{width:8px;height:8px;border-radius:3px}
+  /* upload */
+  .dropzone{border:2px dashed #d8d0bd;border-radius:13px;padding:26px 16px;text-align:center;cursor:pointer;transition:all .18s;background:var(--paper)}
+  .dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--accent-soft)}
+  .dropzone .up-ic{width:42px;height:42px;border-radius:11px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin:0 auto 11px;font-size:20px}
+  .dropzone .up-t{font-size:13.5px;font-weight:600;margin-bottom:4px}
+  .dropzone .up-s{font-size:11.5px;color:var(--muted);line-height:1.5}
+  .file-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-top:9px;animation:rise .3s ease both}
+  .file-ic{width:30px;height:30px;border-radius:7px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+  .file-info{flex:1;min-width:0}
+  .file-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .file-status{font-size:10.5px;color:var(--muted);margin-top:1px;display:flex;align-items:center;gap:5px}
+  .spin{width:10px;height:10px;border:2px solid #d8d0bd;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .file-done{color:var(--accent);font-weight:600}
+  .extract-box{margin-top:13px;background:var(--accent-soft);border:1px solid #d2e5dd;border-radius:11px;padding:13px 14px;animation:rise .35s ease both}
+  .extract-box .eb-t{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .extract-tag{display:inline-block;font-size:11px;background:var(--panel);border:1px solid #cfe3db;color:var(--accent);border-radius:6px;padding:4px 9px;margin:0 5px 5px 0;font-weight:500}
+  /* AI sourced materials */
+  .src-item{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #f1ece0}
+  .src-item:last-child{border-bottom:none}
+  .src-ic{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--gold-soft);border:1px solid #f0e2c0}
+  .src-body{flex:1;min-width:0}
+  .src-title{font-size:12.5px;font-weight:600;line-height:1.4;margin-bottom:2px}
+  .src-meta{font-size:10.5px;color:var(--muted)}
+  .src-link{font-size:10.5px;color:var(--accent);font-weight:600}
+  /* timeline */
+  .tl-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f1ece0;position:relative}
+  .tl-item:last-child{border-bottom:none}
+  .tl-date{flex-shrink:0;width:50px;text-align:center}
+  .tl-date .d{font-size:18px;font-weight:700;line-height:1}
+  .tl-date .m{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  .tl-body{flex:1;min-width:0}
+  .tl-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:3px}
+  .tl-sub{font-size:11px;color:var(--muted)}
+  .tl-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;height:fit-content;white-space:nowrap}
+  .b-exam{background:var(--red-soft);color:var(--red)}
+  .b-assign{background:var(--gold-soft);color:#b07d1f}
+  .b-urgent{background:var(--red);color:#fff}
+  .countdown-strip{font-size:10.5px;font-weight:700;color:var(--red);margin-top:3px}
+  /* exam card */
+  .exam-card{background:linear-gradient(135deg,#1f6f5c,#185448);border-radius:13px;padding:15px 16px;color:#fff;margin-top:4px}
+  .exam-card .lab{font-size:10px;letter-spacing:1px;opacity:.8;text-transform:uppercase}
+  .exam-card .big{font-size:20px;font-weight:700;margin:5px 0 2px}
+  .exam-card .sub{font-size:11.5px;opacity:.85}
+  .panel-foot{font-size:10px;color:#c2bbac;text-align:center;padding:14px 0 2px;line-height:1.6}
+  .add-btn{width:100%;margin-top:11px;padding:9px;border:1px dashed #d8d0bd;border-radius:9px;background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+  .add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  /* onboarding modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(22,20,15,.5);backdrop-filter:blur(3px);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;animation:fade .2s ease}
+  .modal{background:var(--panel);border-radius:18px;max-width:440px;width:100%;padding:30px 30px 26px;box-shadow:0 30px 80px rgba(0,0,0,.3);animation:rise .35s ease both}
+  .modal .step-dots{display:flex;gap:6px;margin-bottom:20px}
+  .modal .sd{height:4px;flex:1;border-radius:3px;background:var(--line);transition:background .3s}
+  .modal .sd.on{background:var(--accent)}
+  .modal h2{font-size:20px;letter-spacing:-.3px;margin-bottom:8px}
+  .modal h2 em{font-style:normal;color:var(--accent)}
+  .modal .mp{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:20px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--ink)}
+  .field input,.field select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13.5px;outline:none;transition:border-color .15s;background:var(--paper)}
+  .field input:focus,.field select:focus{border-color:var(--accent)}
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .opt{padding:13px 12px;border:1.5px solid var(--line);border-radius:11px;cursor:pointer;text-align:center;transition:all .15s;font-size:13px;font-weight:600}
+  .opt:hover{border-color:var(--accent)}
+  .opt.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+  .opt .oe{font-size:20px;display:block;margin-bottom:5px}
+  .opt small{display:block;font-weight:500;color:var(--muted);font-size:10.5px;margin-top:3px}
+  .modal-btn{width:100%;padding:13px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:transform .12s}
+  .modal-btn:hover{transform:translateY(-1px)}
+  .modal-skip{display:block;width:100%;text-align:center;margin-top:12px;font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer}
+  .modal-skip:hover{color:var(--ink)}
+  ::-webkit-scrollbar{width:9px}::-webkit-scrollbar-thumb{background:#e0d9ca;border-radius:9px;border:2px solid var(--panel)}::-webkit-scrollbar-track{background:transparent}
+  @media(max-width:920px){.layout{grid-template-columns:1fr}.panel{display:none}}
+  .demo-badge{position:fixed;bottom:14px;left:14px;z-index:20;background:var(--ink);color:#f0ebdf;font-size:11px;padding:6px 12px;border-radius:8px;opacity:.85}
+</style>
+</head>
+<body>
+  <!-- ===== ONBOARDING ===== -->
+  <div class="modal-bg" id="onboard">
+    <div class="modal">
+      <div class="step-dots"><div class="sd on" id="sd1"></div><div class="sd" id="sd2"></div><div class="sd" id="sd3"></div></div>
+      <!-- step 1 -->
+      <div id="ob1">
+        <h2>欢迎来到 <em>极致智学私教</em> 👋</h2>
+        <p class="mp">零基础也没关系。先花 30 秒告诉我你的情况，我会为你量身定制一套"学什么、学多久、什么时候学完"的计划，陪你一步步通过考试。</p>
+        <div class="field">
+          <label>你要攻克的课程</label>
+          <input id="obCourse" type="text" value="ECON7001 中级微观经济学" placeholder="例如：ECON7001 中级微观经济学">
+        </div>
+        <div class="field">
+          <label>你的学校</label>
+          <input id="obSchool" type="text" value="University of Melbourne" placeholder="例如：University of Melbourne">
+        </div>
+        <button class="modal-btn" onclick="obNext(2)">下一步</button>
+        <button class="modal-skip" onclick="closeOnboard()">先看看再说，跳过</button>
+      </div>
+      <!-- step 2 -->
+      <div id="ob2" style="display:none">
+        <h2>你目前的基础？</h2>
+        <p class="mp">我会据此调整讲解的深度和起点 —— 选"零基础"，我就从最根本的概念讲起，绝不跳步。</p>
+        <div class="opt-grid" id="baseOpts">
+          <div class="opt sel" data-v="zero"><span class="oe">🌱</span>零基础<small>第一次接触</small></div>
+          <div class="opt" data-v="some"><span class="oe">📖</span>有点基础<small>学过但忘了</small></div>
+          <div class="opt" data-v="exam"><span class="oe">🎯</span>冲高分<small>想拿好成绩</small></div>
+          <div class="opt" data-v="rescue"><span class="oe">🚑</span>临考急救<small>快考试了</small></div>
+        </div>
+        <button class="modal-btn" onclick="obNext(3)">下一步</button>
+      </div>
+      <!-- step 3 -->
+      <div id="ob3" style="display:none">
+        <h2>每天能投入多久学习？</h2>
+        <p class="mp">告诉我你的可用时间，我会把任务拆成你扛得住的每日小目标，不会一次压垮你。</p>
+        <div class="opt-grid" id="timeOpts">
+          <div class="opt" data-v="0.5"><span class="oe">⏳</span>30 分钟<small>很忙</small></div>
+          <div class="opt sel" data-v="1"><span class="oe">⏰</span>1 小时<small>适中</small></div>
+          <div class="opt" data-v="2"><span class="oe">📚</span>2 小时<small>较充裕</small></div>
+          <div class="opt" data-v="3"><span class="oe">🔥</span>3+ 小时<small>全力冲</small></div>
+        </div>
+        <button class="modal-btn" onclick="finishOnboard()">生成我的专属学习计划 →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">极</div>
+      <div>
+        <div class="brand-name">极致 · <span>智学私教</span></div>
+        <div class="brand-sub">零基础 AI 自学系统 · Newcore</div>
+      </div>
+    </div>
+    <div class="course-pill"><span class="dot"></span><span id="topCourse">ECON7001 中级微观经济学</span></div>
+  </div>
+
+  <div class="layout">
+    <!-- ============ CHAT ============ -->
+    <div class="chat">
+      <div class="chat-scroll" id="scroll">
+        <div class="chat-inner" id="thread">
+          <div class="welcome" id="welcome">
+            <h1>你好，我是你的 <em>专属私教</em>。<br>计划已生成，我们从今天的任务开始吧。</h1>
+            <p>右侧有你的完整安排：考点掌握地图、上传资料解析、作业与考试时间轴。随时问我任何不懂的，我会从最基础讲起，每学一点，进度都会更新。</p>
+            <div class="chips" id="chips">
+              <div class="chip" data-q="按我的计划，今天第一项任务该学什么？请从零基础开始教我。"><span class="k">开始</span>今天我该学什么？</div>
+              <div class="chip" data-q="什么是需求价格弹性？我完全零基础，请用最简单的例子讲。"><span class="k">入门</span>需求价格弹性是什么？</div>
+              <div class="chip" data-q="我下周就要交作业了，作业涉及哪些考点？我该怎么准备？"><span class="k">救急</span>作业快 due 了怎么办？</div>
+              <div class="chip" data-q="帮我看看，按现在的进度，我能在考试前学完吗？"><span class="k">规划</span>来得及学完吗？</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="composer-inner">
+          <textarea id="input" rows="1" placeholder="问我任何问题，或让我考考你…"></textarea>
+          <button class="send" id="send" title="发送">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="composer-hint">演示原型 · 由 Claude 实时驱动 · 正式版将基于贵机构上传课件做精准问答（RAG）</div>
+      </div>
+    </div>
+
+    <!-- ============ RIGHT PANEL ============ -->
+    <aside class="panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="progress"><span class="ti">📊</span>进度</button>
+        <button class="tab" data-tab="materials"><span class="ti">📁</span>资料</button>
+        <button class="tab" data-tab="timeline"><span class="ti">📅</span>日程</button>
+      </div>
+      <div class="tab-body">
+
+        <!-- PROGRESS -->
+        <div class="tab-pane active" id="pane-progress">
+          <div class="sec-label">考试就绪度</div>
+          <div class="ring-wrap">
+            <div class="ring">
+              <svg width="90" height="90">
+                <circle cx="45" cy="45" r="38" fill="none" stroke="#eee7d8" stroke-width="8.5"/>
+                <circle id="ringFill" cx="45" cy="45" r="38" fill="none" stroke="url(#g)" stroke-width="8.5" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="238.8"/>
+                <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b8c6f"/><stop offset="1" stop-color="#1f6f5c"/></linearGradient></defs>
+              </svg>
+              <div class="ring-num"><b id="ringPct">0%</b><small>就绪度</small></div>
+            </div>
+            <div class="ring-side"><b id="masteredCount">0 / 8 考点掌握</b>达到约 70% 即具备通过本课考试的基础水平。继续学习，进度会实时上升。</div>
+          </div>
+          <div class="sec-label mt">考点掌握地图</div>
+          <div id="topicList"></div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:var(--m0)"></span>未开始</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--m1)"></span>能复述</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--m2)"></span>能应用</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--m3)"></span>模拟考通过</div>
+          </div>
+        </div>
+
+        <!-- MATERIALS -->
+        <div class="tab-pane" id="pane-materials">
+          <div class="sec-label">上传这门课的资料</div>
+          <div class="dropzone" id="dropzone">
+            <div class="up-ic">📤</div>
+            <div class="up-t">拖入或点击上传课件</div>
+            <div class="up-s">支持 PPT、PDF、Word、讲义照片<br>系统会自动解析出考点</div>
+            <input type="file" id="fileInput" multiple hidden accept=".pdf,.ppt,.pptx,.doc,.docx,.png,.jpg">
+          </div>
+          <div id="fileList"></div>
+          <div id="extractResult"></div>
+
+          <div class="sec-label mt">AI 自动检索的相关资料</div>
+          <div id="aiSources">
+            <div class="src-item">
+              <div class="src-ic">🏛️</div>
+              <div class="src-body">
+                <div class="src-title">UniMelb ECON20002 课程主页</div>
+                <div class="src-meta">官方教学大纲 · 评估方式 · 推荐教材</div>
+              </div>
+              <div class="src-link">官方</div>
+            </div>
+            <div class="src-item">
+              <div class="src-ic">📘</div>
+              <div class="src-body">
+                <div class="src-title">Microeconomics（Pindyck & Rubinfeld）</div>
+                <div class="src-meta">本课指定教材 · 对应章节已映射</div>
+              </div>
+              <div class="src-link">教材</div>
+            </div>
+            <div class="src-item">
+              <div class="src-ic">📝</div>
+              <div class="src-body">
+                <div class="src-title">历年 Past Exam 题型分析</div>
+                <div class="src-meta">弹性计算、垄断定价为高频考点</div>
+              </div>
+              <div class="src-link">真题</div>
+            </div>
+            <div class="src-item">
+              <div class="src-ic">🎥</div>
+              <div class="src-body">
+                <div class="src-title">Khan Academy 微观经济学（中英字幕）</div>
+                <div class="src-meta">免费视频 · 适合零基础打底</div>
+              </div>
+              <div class="src-link">视频</div>
+            </div>
+          </div>
+          <p style="font-size:10.5px;color:var(--muted);margin-top:12px;line-height:1.6">演示数据。正式版会基于你上传的课件 + 联网检索，匹配本校本课的真实资料。</p>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="tab-pane" id="pane-timeline">
+          <div class="sec-label">作业与考试时间轴</div>
+          <div id="timeline"></div>
+          <button class="add-btn" id="addDeadline">＋ 添加作业 / 考试时间</button>
+
+          <div class="sec-label mt">本周建议节奏</div>
+          <div class="exam-card">
+            <div class="lab">距离期末考试</div>
+            <div class="big" id="examDays">还剩 23 天</div>
+            <div class="sub">建议每天 1 小时 · 优先攻克标红考点</div>
+          </div>
+          <div class="panel-foot">系统会随 due 临近自动调整每日任务优先级</div>
+        </div>
+
+      </div>
+    </aside>
+  </div>
+
+  <div class="demo-badge">● 增强版演示 Demo</div>
+
+<script>
+/* ============ 数据模型 ============ */
+const TOPICS=[
+  {id:'elasticity',name:'需求与供给弹性',level:0,key:['弹性','elasticity','需求价格','供给']},
+  {id:'surplus',name:'消费者/生产者剩余',level:0,key:['剩余','surplus','福利','无谓损失']},
+  {id:'utility',name:'效用与消费者选择',level:0,key:['效用','utility','无差异','预算线','边际效用']},
+  {id:'production',name:'生产与成本理论',level:0,key:['成本','生产','边际成本','规模','产量']},
+  {id:'competition',name:'完全竞争市场',level:0,key:['完全竞争','perfect competition','价格接受']},
+  {id:'monopoly',name:'垄断与市场势力',level:0,key:['垄断','monopoly','市场势力','价格歧视']},
+  {id:'game',name:'博弈论基础',level:0,key:['博弈','game','纳什','囚徒','均衡策略']},
+  {id:'externality',name:'外部性与公共品',level:0,key:['外部性','externality','公共品','科斯','庇古']},
+];
+const LV_TAG=['未开始','能复述','能应用','已通过'],LV_CLS=['t0','t1','t2','t3'],BAR=['var(--m0)','var(--m1)','var(--m2)','var(--m3)'];
+
+const DEADLINES=[
+  {d:24,m:'JUN',title:'Problem Set 2（弹性 + 剩余）',sub:'计入总评 15%',type:'assign',days:7},
+  {d:2,m:'JUL',title:'Mid-semester Test',sub:'覆盖前 4 个考点',type:'exam',days:15},
+  {d:10,m:'JUL',title:'期末考试 Final Exam',sub:'全部 8 个考点',type:'exam',days:23},
+];
+
+let profile={course:'ECON7001 中级微观经济学',school:'University of Melbourne',base:'zero',time:'1'};
+
+/* ============ 渲染：考点 ============ */
+function renderTopics(pulseId){
+  const list=document.getElementById('topicList');list.innerHTML='';
+  TOPICS.forEach(t=>{
+    const row=document.createElement('div');
+    row.className='topic'+(t.id===pulseId?' pulse':'');
+    row.innerHTML=`<div class="topic-bar" style="background:${BAR[t.level]}"></div>
+      <div class="topic-body"><div class="topic-name">${t.name}</div>
+      <div class="topic-meta">${t.level===0?'尚未学习':'已练习 '+(t.touches||1)+' 次'}</div></div>
+      <div class="topic-tag ${LV_CLS[t.level]}">${LV_TAG[t.level]}</div>`;
+    list.appendChild(row);
+  });
+  updateReadiness();
+}
+function updateReadiness(){
+  const got=TOPICS.reduce((s,t)=>s+t.level,0),pct=Math.round(got/(TOPICS.length*3)*100);
+  const mastered=TOPICS.filter(t=>t.level>=2).length;
+  document.getElementById('ringPct').textContent=pct+'%';
+  document.getElementById('masteredCount').textContent=mastered+' / '+TOPICS.length+' 考点掌握';
+  const c=238.8;document.getElementById('ringFill').style.strokeDashoffset=c-c*pct/100;
+}
+function advance(text){
+  const low=text.toLowerCase();
+  for(const t of TOPICS){
+    if(t.key.some(k=>low.includes(k.toLowerCase()))){
+      t.level=Math.min(3,t.level+1);t.touches=(t.touches||0)+1;
+      renderTopics(t.id);return;
+    }
+  }
+}
+renderTopics();
+
+/* ============ 渲染：时间轴 ============ */
+function renderTimeline(){
+  const tl=document.getElementById('timeline');tl.innerHTML='';
+  DEADLINES.sort((a,b)=>a.days-b.days).forEach(x=>{
+    const urgent=x.days<=7;
+    const badge=x.type==='exam'?(urgent?'b-urgent':'b-exam'):'b-assign';
+    const badgeTxt=x.type==='exam'?'考试':'作业';
+    const item=document.createElement('div');item.className='tl-item';
+    item.innerHTML=`<div class="tl-date"><div class="d">${x.d}</div><div class="m">${x.m}</div></div>
+      <div class="tl-body"><div class="tl-title">${x.title}</div>
+      <div class="tl-sub">${x.sub}</div>
+      <div class="countdown-strip">⏳ 还剩 ${x.days} 天</div></div>
+      <div class="tl-badge ${badge}">${urgent&&x.type==='exam'?'临近':badgeTxt}</div>`;
+    tl.appendChild(item);
+  });
+  const final=DEADLINES.find(d=>d.title.includes('期末'));
+  if(final)document.getElementById('examDays').textContent='还剩 '+final.days+' 天';
+}
+renderTimeline();
+
+/* ============ 标签切换 ============ */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('pane-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============ 文件上传（模拟解析） ============ */
+const dropzone=document.getElementById('dropzone'),fileInput=document.getElementById('fileInput');
+dropzone.addEventListener('click',()=>fileInput.click());
+dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('drag')});
+dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop',e=>{e.preventDefault();dropzone.classList.remove('drag');handleFiles(e.dataTransfer.files)});
+fileInput.addEventListener('change',()=>handleFiles(fileInput.files));
+
+function handleFiles(files){
+  const list=document.getElementById('fileList');
+  [...files].forEach(f=>{
+    const item=document.createElement('div');item.className='file-item';
+    item.innerHTML=`<div class="file-ic">📄</div><div class="file-info">
+      <div class="file-name">${f.name}</div>
+      <div class="file-status"><span class="spin"></span>正在解析考点…</div></div>`;
+    list.appendChild(item);
+    setTimeout(()=>{
+      item.querySelector('.file-status').innerHTML='<span class="file-done">✓ 已解析，提取出 6 个考点</span>';
+      showExtract();
+    },1800+Math.random()*900);
+  });
+}
+let extractShown=false;
+function showExtract(){
+  if(extractShown)return;extractShown=true;
+  document.getElementById('extractResult').innerHTML=
+    `<div class="extract-box"><div class="eb-t">✨ 已从你的课件中识别出考点</div>
+      <span class="extract-tag">需求与供给弹性</span><span class="extract-tag">消费者剩余</span>
+      <span class="extract-tag">效用最大化</span><span class="extract-tag">成本曲线</span>
+      <span class="extract-tag">完全竞争</span><span class="extract-tag">垄断定价</span>
+      <div style="font-size:11.5px;color:var(--accent);margin-top:9px;line-height:1.5">
+        ✓ 已自动同步到「进度」中的考点地图，并据此规划你的学习计划。</div></div>`;
+}
+
+/* ============ 添加 deadline ============ */
+document.getElementById('addDeadline').addEventListener('click',()=>{
+  const title=prompt('作业/考试名称：','Essay 1');
+  if(!title)return;
+  const days=parseInt(prompt('距离现在还有几天？','12'))||12;
+  const dt=new Date();dt.setDate(dt.getDate()+days);
+  const M=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  DEADLINES.push({d:dt.getDate(),m:M[dt.getMonth()],title,sub:'手动添加',type:title.toLowerCase().includes('exam')||title.includes('考')?'exam':'assign',days});
+  renderTimeline();
+});
+
+/* ============ Onboarding ============ */
+let obStep=1;
+function obNext(n){
+  document.getElementById('ob'+obStep).style.display='none';
+  document.getElementById('ob'+n).style.display='block';
+  document.getElementById('sd'+n).classList.add('on');
+  obStep=n;
+}
+function bindOpts(id,field){
+  document.querySelectorAll('#'+id+' .opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      document.querySelectorAll('#'+id+' .opt').forEach(x=>x.classList.remove('sel'));
+      o.classList.add('sel');profile[field]=o.dataset.v;
+    });
+  });
+}
+bindOpts('baseOpts','base');bindOpts('timeOpts','time');
+function closeOnboard(){document.getElementById('onboard').style.display='none'}
+function finishOnboard(){
+  profile.course=document.getElementById('obCourse').value||profile.course;
+  profile.school=document.getElementById('obSchool').value||profile.school;
+  document.getElementById('topCourse').textContent=profile.course;
+  closeOnboard();
+  injectPlan();
+}
+
+/* ============ 生成学习计划卡片（注入聊天） ============ */
+function injectPlan(){
+  const w=document.getElementById('welcome');
+  const baseTxt={zero:'零基础起步',some:'有基础复习',exam:'冲刺高分',rescue:'临考急救'}[profile.base];
+  const hrs=profile.time;
+  const plan=document.createElement('div');plan.className='plan-card';plan.style.marginTop='18px';
+  plan.innerHTML=`
+    <h3><span class="ic">🗺️</span>你的专属 7 天启动计划</h3>
+    <div class="meta">${profile.course} · ${baseTxt} · 每天约 ${hrs} 小时 · 共 8 个考点</div>
+    <div class="day-row"><div class="day-tag">今天<small>DAY 1</small></div>
+      <div class="day-body"><div class="day-task">弹性入门：什么是需求价格弹性</div>
+      <div class="day-detail">从生活例子理解概念 + 1 道基础计算。零基础友好。</div></div>
+      <div class="day-time">${Math.round(hrs*45)} 分钟</div></div>
+    <div class="day-row"><div class="day-tag">明天<small>DAY 2</small></div>
+      <div class="day-body"><div class="day-task">弹性的应用 + 供给弹性</div>
+      <div class="day-detail">巩固昨天 + 学新内容，为 Problem Set 2 打底。</div></div>
+      <div class="day-time">${Math.round(hrs*60)} 分钟</div></div>
+    <div class="day-row"><div class="day-tag">DAY 3</div>
+      <div class="day-body"><div class="day-task">消费者剩余与生产者剩余</div>
+      <div class="day-detail">作业 PS2 的核心考点，重点攻克。</div></div>
+      <div class="day-time">${Math.round(hrs*60)} 分钟</div></div>
+    <div class="day-row"><div class="day-tag">DAY 4-5</div>
+      <div class="day-body"><div class="day-task">完成 Problem Set 2 + 复习</div>
+      <div class="day-detail">⚠️ 作业 6/24 截止，前 3 天的内容刚好够用。</div></div>
+      <div class="day-time">每天 ${Math.round(hrs*60)} 分</div></div>
+    <div class="day-row"><div class="day-tag">DAY 6-7</div>
+      <div class="day-body"><div class="day-task">效用理论 + 自测过关</div>
+      <div class="day-detail">进入第 3 个考点，我会出题检验你是否真懂。</div></div>
+      <div class="day-time">每天 ${Math.round(hrs*60)} 分</div></div>`;
+  w.parentNode.insertBefore(plan,w.nextSibling);
+  document.getElementById('scroll').scrollTop=0;
+}
+
+/* ============ 对话逻辑 ============ */
+const thread=document.getElementById('thread'),scroll=document.getElementById('scroll');
+const input=document.getElementById('input'),sendBtn=document.getElementById('send');
+let history=[],busy=false;
+
+function sysPrompt(){
+  const baseMap={zero:'学生是零基础，第一次接触这门课，务必从最根本的概念讲起，绝不跳步，多用生活化例子。',
+    some:'学生学过但忘了，可以快速带过基础、重点补薄弱环节。',
+    exam:'学生想冲高分，讲解可深入，多给考试拿分技巧和易错点。',
+    rescue:'学生临近考试时间紧张，聚焦高频考点和答题模板，高效划重点。'};
+  return `你是"极致·智学私教"，面向硕士留学生的 AI 课后自学辅导老师。当前课程：「${profile.course}」，学校：${profile.school}。
+
+学生情况：${baseMap[profile.base]}每天可学约 ${profile.time} 小时。
+
+教学要求：
+1. 讲解简洁，每次 200 字内，用通俗例子帮助理解，必要时给关键公式。
+2. 讲完一个点后，用一句话提一个"检验理解"的小问题。
+3. 始终对标"能否通过考试"，指出该考点的常见出题方式或易错点。
+4. 如学生问学习规划/进度，结合他的作业 due（PS2 在 6/24）和期末（约 23 天后），给出务实建议和每日时间分配。
+5. 语气温暖、鼓励、判断中立。中文回答，专业术语中英对照。
+
+输出：自然段落，关键术语用 **加粗**。检验问题单独成段，以"🤔 检验一下：" 开头。`;
+}
+
+function addUserMsg(t){const e=document.createElement('div');e.className='msg user';e.innerHTML=`<div class="avatar">我</div><div class="bubble"></div>`;e.querySelector('.bubble').textContent=t;thread.appendChild(e);sd()}
+function addTutorTyping(){const e=document.createElement('div');e.className='msg tutor';e.innerHTML=`<div class="avatar">极</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;thread.appendChild(e);sd();return e.querySelector('.bubble')}
+function renderMd(raw){
+  let h=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const parts=h.split(/🤔\s*检验一下[:：]/);
+  let body=parts[0].trim().split(/\n{2,}|\n/).filter(Boolean).map(p=>`<p>${p}</p>`).join('');
+  if(parts[1])body+=`<div class="check-q"><b>🤔 检验一下</b>${parts[1].trim()}</div>`;
+  return body;
+}
+function sd(){scroll.scrollTop=scroll.scrollHeight}
+
+async function send(text){
+  if(busy||!text.trim())return;busy=true;sendBtn.disabled=true;
+  const w=document.getElementById('welcome');if(w)w.remove();
+  const pc=thread.querySelector('.plan-card');if(pc&&pc.dataset.kept!=='1'){pc.dataset.kept='1'}
+  addUserMsg(text);history.push({role:'user',content:text});
+  input.value='';input.style.height='auto';
+  const bubble=addTutorTyping();
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,system:sysPrompt(),messages:history})
+    });
+    const data=await res.json();
+    const reply=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim()||"（演示提示：未取得回复，请稍后再试）";
+    history.push({role:'assistant',content:reply});
+    bubble.innerHTML=renderMd(reply);
+    advance(text+' '+reply);sd();
+  }catch(err){
+    bubble.innerHTML=`<p>演示连接出错了，请稍后重试。</p><p style="font-size:12px;color:var(--muted)">（${String(err).slice(0,80)}）</p>`;
+  }finally{busy=false;sendBtn.disabled=false;input.focus()}
+}
+sendBtn.addEventListener('click',()=>send(input.value));
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(input.value)}});
+input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});
+document.getElementById('chips').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c)send(c.dataset.q)});
+</script>
+</body>
+</html>
