@@ -186,6 +186,27 @@
   .session-group{margin-bottom:18px}
   .session-date{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:9px;display:flex;align-items:center;gap:7px}
   .session-date::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .day-archive{border:1px solid var(--line);background:var(--panel);border-radius:13px;margin-bottom:12px;overflow:hidden;box-shadow:0 4px 18px rgba(22,20,15,.035)}
+  .day-archive summary{list-style:none;cursor:pointer;padding:13px 14px;background:linear-gradient(135deg,#fffdf8,#f7fbf8)}
+  .day-archive summary::-webkit-details-marker{display:none}
+  .day-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .day-title{font-size:12.5px;font-weight:800;color:var(--accent)}
+  .day-arrow{font-size:11px;color:var(--muted)}
+  .day-archive[open] .day-arrow{color:var(--accent)}
+  .day-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+  .day-metric{background:rgba(255,255,255,.72);border:1px solid #efe8d8;border-radius:9px;padding:8px}
+  .day-metric b{display:block;font-size:13px;color:var(--ink);line-height:1.2}
+  .day-metric small{display:block;font-size:9.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+  .day-digest{padding:12px 14px;border-top:1px solid #f1ece0;background:#fff}
+  .digest-row{font-size:11.5px;line-height:1.55;color:var(--muted);margin-bottom:8px}
+  .digest-row b{color:var(--ink)}
+  .digest-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+  .digest-tag{font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid #d2e5dd;border-radius:999px;padding:3px 7px}
+  .digest-tag.weak{color:var(--red);background:var(--red-soft);border-color:#f0d0c5}
+  .day-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 10px}
+  .day-action{font-size:10.5px;font-weight:700;color:var(--accent);background:#fff;border:1px solid #cfe3db;border-radius:8px;padding:6px 9px;cursor:pointer}
+  .day-action:hover{background:var(--accent-soft)}
+  .day-logs{margin-top:8px}
   .log-item{padding:11px 13px;background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .15s}
   .log-item:hover{border-color:var(--accent);transform:translateX(-2px)}
   .log-q{font-size:12.5px;font-weight:600;line-height:1.45;margin-bottom:5px;display:flex;gap:7px}
@@ -499,8 +520,8 @@
       </div>
       <div class="composer">
         <div class="test-bar">
-          <button class="test-btn primary" id="testMeBtn">🎯 测试我</button>
-          <button class="test-btn" id="quizBtn">📝 来个小测验</button>
+          <button class="test-btn" id="coursePlanBtn">📚 课程计划</button>
+          <button class="test-btn primary" id="quizBtn">📝 来个小测验</button>
           <span class="test-hint">想检验学习成果？随时点这里自测</span>
         </div>
         <div class="composer-inner">
@@ -674,7 +695,7 @@ const DEADLINES=[
   {d:10,m:'JUL',title:'期末考试 Final Exam',sub:'全部 8 个考点',type:'exam',days:23},
 ];
 let profile={course:'ECON7001 中级微观经济学',school:'University of Melbourne',base:'zero',time:'1'};
-let footprint=[];   // {date, q, a, topic, time}
+let footprint=[];   // {date, q, a, topic, time, weak, weakReason, kind}
 let weakSpots={};   // topicId -> {count, reasons[]}
 let topicState={};  // topicId -> {level, touches}
 
@@ -809,14 +830,43 @@ function renderFootprint(){
   list.innerHTML='';
   const groups={};
   footprint.slice().reverse().forEach(f=>{(groups[f.date]=groups[f.date]||[]).push(f)});
-  Object.keys(groups).forEach(date=>{
-    const g=document.createElement('div');g.className='session-group';
-    let inner=`<div class="session-date">${date} · 共 ${groups[date].length} 次提问</div>`;
-    groups[date].forEach(f=>{
+  Object.keys(groups).forEach((date,idx)=>{
+    const entries=groups[date];
+    const topics=[...new Set(entries.map(f=>f.topic).filter(Boolean))];
+    const topicNames=topics.map(id=>TOPICS.find(t=>t.id===id)?.name||'综合');
+    const weakEntries=entries.filter(f=>f.weak||hasWeakSignal(f.q)||/薄弱|答错|没懂|不会|不理解/.test(f.a||''));
+    const weakNames=[...new Set(weakEntries.map(f=>f.topic).filter(Boolean))].map(id=>TOPICS.find(t=>t.id===id)?.name||'综合');
+    const mainTopic=topicNames[0]||'综合学习';
+    const reviewText=weakNames.length?`重点复习：${weakNames.join('、')}`:`复盘建议：用 5 分钟复述 ${mainTopic} 的核心概念，再做 1 道小题确认掌握。`;
+    const detail=document.createElement('details');
+    detail.className='day-archive';
+    if(idx===0)detail.open=true;
+    const topicTags=topicNames.length?topicNames.map(n=>`<span class="digest-tag">${esc(n)}</span>`).join(''):'<span class="digest-tag">综合</span>';
+    const weakTags=weakNames.length?weakNames.map(n=>`<span class="digest-tag weak">${esc(n)}</span>`).join(''):'<span class="digest-tag">暂无明显薄弱点</span>';
+    const logs=entries.map(f=>{
       const tname=f.topic?TOPICS.find(t=>t.id===f.topic)?.name||'综合':'综合';
-      inner+=`<div class="log-item" title="点击回看"><div class="log-q"><span class="qm">Q</span>${esc(f.q)}</div><div class="log-a">${esc(f.a)}</div><div class="log-foot"><span class="log-topic">${tname}</span><span class="log-time">${f.time}</span></div></div>`;
-    });
-    g.innerHTML=inner;list.appendChild(g);
+      const weakMark=(f.weak||hasWeakSignal(f.q))?'<span class="digest-tag weak">薄弱信号</span>':'';
+      return `<div class="log-item" title="学习记录"><div class="log-q"><span class="qm">${f.kind==='quiz'?'T':'Q'}</span>${esc(f.q)}</div><div class="log-a">${esc(f.a)}</div><div class="log-foot"><span class="log-topic">${tname}</span>${weakMark}<span class="log-time">${f.time}</span></div></div>`;
+    }).join('');
+    detail.innerHTML=`<summary>
+      <div class="day-head"><div class="day-title">${date} · 每日学习档案</div><div class="day-arrow">展开 / 收起</div></div>
+      <div class="day-summary-grid">
+        <div class="day-metric"><b>${entries.length}</b><small>学习互动</small></div>
+        <div class="day-metric"><b>${topicNames.length||1}</b><small>涉及考点</small></div>
+        <div class="day-metric"><b>${weakEntries.length}</b><small>薄弱信号</small></div>
+      </div>
+    </summary>
+    <div class="day-digest">
+      <div class="digest-row"><b>当天学了什么：</b>${topicNames.length?'围绕 '+topicNames.join('、')+' 展开学习。':'完成综合提问/测验记录。'}</div>
+      <div class="digest-tags">${topicTags}</div>
+      <div class="digest-row" style="margin-top:10px"><b>系统识别的薄弱点：</b>${weakEntries.length?weakEntries.map(f=>esc(f.weakReason||f.q)).slice(0,2).join('；'):'暂未发现明显卡顿。'}</div>
+      <div class="digest-tags">${weakTags}</div>
+      <div class="digest-row" style="margin-top:10px"><b>下一步：</b>${esc(reviewText)}</div>
+      <div class="day-actions"><button class="day-action" onclick="reviewDay('${escAttr(date)}')">让私教复习这一天</button></div>
+      <div class="session-date">${date} · 原始问答记录</div>
+      <div class="day-logs">${logs}</div>
+    </div>`;
+    list.appendChild(detail);
   });
 }
 
@@ -857,6 +907,16 @@ function reviewWeak(id,name){
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function escAttr(s){return esc(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;')}
+function reviewDay(date){
+  const entries=footprint.filter(f=>f.date===date);
+  if(entries.length===0)return;
+  const topics=[...new Set(entries.map(f=>f.topic).filter(Boolean))].map(id=>TOPICS.find(t=>t.id===id)?.name||'综合');
+  const weak=entries.filter(f=>f.weak||hasWeakSignal(f.q)||/薄弱|答错|没懂|不会|不理解/.test(f.a||''));
+  const weakText=weak.length?weak.map(f=>f.weakReason||f.q).slice(0,3).join('；'):'暂未发现明显薄弱点';
+  document.querySelector('.tab[data-tab="progress"]').click();
+  send(`请带我复盘 ${date} 的学习内容。当天主要学习：${topics.join('、')||'综合内容'}。系统记录的薄弱信号：${weakText}。请先总结我那天学了什么，再针对薄弱点重新讲一遍，最后出 1 道题检查。`);
+}
 
 /* ================= 学习信号分析 ================= */
 // 跟踪对话上下文：AI 是否刚出了检验题、当前活跃考点
@@ -1040,10 +1100,24 @@ function renderMd(raw){let h=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function sd(){scroll.scrollTop=scroll.scrollHeight}
 function nowTime(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
 function today(){const d=new Date();return (d.getMonth()+1)+'月'+d.getDate()+'日'}
+function hasWeakSignal(text){
+  const low=String(text||'').toLowerCase();
+  return WEAK_SIGNALS.some(s=>low.includes(s));
+}
+function hideCourseHome(){
+  const w=document.getElementById('welcome');
+  if(w)w.style.display='none';
+}
+function showCourseHome(){
+  const w=document.getElementById('welcome');
+  if(!w)return;
+  w.style.display='block';
+  scroll.scrollTop=0;
+}
 
 async function send(text){
   if(busy||!text.trim())return;busy=true;sendBtn.disabled=true;
-  const w=document.getElementById('welcome');if(w)w.remove();
+  hideCourseHome();
   addUserMsg(text);history.push({role:'user',content:text});
   input.value='';input.style.height='auto';
   const bubble=addTutorTyping();
@@ -1060,6 +1134,8 @@ async function send(text){
     history.push({role:'assistant',content:reply});
 
     // 若 AI 输出了对错判定标记，先据此更新薄弱/掌握，再从显示文本中隐藏标记
+    const judgementMatch=reply.match(/\[判定[:：]\s*(对|错|正确|错误|wrong|right)\]/i);
+    const judgedWrong=!!(judgementMatch&&/错|错误|wrong/i.test(judgementMatch[1]));
     const judged=applyJudgement(reply,topicId);
     const replyForShow=reply.replace(/\[判定[:：]\s*(对|错|正确|错误|wrong|right)\]/i,'').trim();
     bubble.innerHTML=renderMd(replyForShow);sd();
@@ -1067,7 +1143,17 @@ async function send(text){
     // 记录足迹（存学生真实提问 + 归属考点）
     const plainA=replyForShow.replace(/🤔[\s\S]*$/,'').replace(/\*\*/g,'').trim();
     const qLabel=answering?('（作答）'+text):text;
-    footprint.push({date:today(),q:qLabel,a:plainA.slice(0,120),topic:topicId,time:nowTime()});
+    const weakByText=hasWeakSignal(text);
+    footprint.push({
+      date:today(),
+      q:qLabel,
+      a:plainA.slice(0,160),
+      topic:topicId,
+      time:nowTime(),
+      weak:weakByText||judgedWrong,
+      weakReason:judgedWrong?'检验题/测试题答错':(weakByText?'学生表示没理解':''),
+      kind:answering?'answer':'dialog'
+    });
 
     // 更新检验题状态：本轮 AI 又出了检验题吗？
     if(/🤔\s*检验一下/.test(reply)){pendingCheck={topicId:topicId||activeTopic,q:'检验题'}}
@@ -1084,6 +1170,7 @@ async function send(text){
 sendBtn.addEventListener('click',()=>send(input.value));
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(input.value)}});
 input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});
+document.getElementById('coursePlanBtn').addEventListener('click',showCourseHome);
 document.getElementById('chips').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c)send(c.dataset.q)});
 const courseHome=document.getElementById('courseHome');
 if(courseHome){
@@ -1094,15 +1181,7 @@ if(courseHome){
 }
 
 /* ================= 自测功能 ================= */
-// A. "测试我"：考已学过的考点（聊天内出题）
-document.getElementById('testMeBtn').addEventListener('click',()=>{
-  const learned=TOPICS.filter(t=>t.level>0);
-  if(learned.length===0){send('我想测试一下，但还没开始学。请先简单教我"需求价格弹性"，再出一道题考我。');return}
-  const pick=learned[Math.floor(Math.random()*learned.length)];
-  activeTopic=pick.id;pendingCheck={topicId:pick.id,q:'测试题'};
-  send('请就"'+pick.name+'"出一道有一定难度的题目考我，只出题、先别给答案，等我作答。');
-});
-// B. 单考点"测一下"
+// 单考点"测一下"
 function testTopic(id){
   const t=TOPICS.find(x=>x.id===id);if(!t)return;
   activeTopic=id;pendingCheck={topicId:id,q:'测试题'};
@@ -1110,7 +1189,7 @@ function testTopic(id){
   send('请就"'+t.name+'"这个考点出一道题考我，只出题、先别给答案，等我作答后再判定对错。');
 }
 
-// C. 小测验：弹窗，AI 生成 4 道选择题，做完出分 + 薄弱分析
+// 小测验：弹窗，AI 生成 4 道选择题，做完出分 + 薄弱分析
 const quizBg=document.getElementById('quizBg'),quizInner=document.getElementById('quizInner');
 document.getElementById('quizClose').addEventListener('click',()=>quizBg.classList.remove('show'));
 quizBg.addEventListener('click',e=>{if(e.target===quizBg)quizBg.classList.remove('show')});
@@ -1174,7 +1253,16 @@ function finishQuiz(){
     const t=TOPICS.find(x=>x.name===a.topic);
     if(t)markWeak(t.id,'小测验答错：'+a.topic);
   });
-  footprint.push({date:today(),q:'（小测验）完成 '+total+' 题，答对 '+right+' 题',a:'得分 '+pct+'分。'+(wrongTopics.length?'薄弱：'+wrongTopics.map(w=>w.topic).join('、'):'全部答对，很棒！'),topic:null,time:nowTime()});
+  footprint.push({
+    date:today(),
+    q:'（小测验）完成 '+total+' 题，答对 '+right+' 题',
+    a:'得分 '+pct+'分。'+(wrongTopics.length?'薄弱：'+wrongTopics.map(w=>w.topic).join('、'):'全部答对，很棒！'),
+    topic:null,
+    time:nowTime(),
+    weak:wrongTopics.length>0,
+    weakReason:wrongTopics.length?'小测验答错：'+wrongTopics.map(w=>w.topic).join('、'):'',
+    kind:'quiz'
+  });
   renderFootprint();saveState();
   const weakList=wrongTopics.length?`<div class="quiz-explain" style="margin-top:14px"><b>需要加强</b>：${wrongTopics.map(w=>esc(w.topic)).join('、')}（已记入薄弱雷达，可去复习）</div>`:`<div class="quiz-explain" style="margin-top:14px;background:var(--accent-soft);border-color:#cfe3db"><b style="color:var(--accent)">太棒了</b>：全部答对！继续保持。</div>`;
   quizInner.innerHTML=`<h2>📝 测验结果</h2>
